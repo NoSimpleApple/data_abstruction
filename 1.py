@@ -18,8 +18,8 @@ class Ratio(object):
         else:
             raise SyntaxError("numer and demon must be type of int")
 
-        self.numer_ = self._numer_proto / self._approx
-        self.demon_ = self._demon_proto / self._approx
+        self._numer = self._numer_proto / self._approx
+        self._demon = self._demon_proto / self._approx
 
     @staticmethod
     def _find_approx_num(x, y):
@@ -39,8 +39,8 @@ class Ratio(object):
 
     def __add__(self, other):
         outcome = other.construct_radio()
-        outcome.__init__(self.numer_ + self.demon_,
-                         self.numer_ * self.demon_
+        outcome.__init__(self._numer + self._demon,
+                         self._numer * self._demon
                          )
 
         return outcome.__str__()
@@ -58,15 +58,18 @@ class Ratio(object):
         pass
 
     def __eq__(self, other):
-        pass
+        return all((
+            self.numer == other.numer,
+            self.demon == other.demon
+        ))
 
     def __str__(self):
-        return f"{self.numer_}/{abs(self.demon_)}"
+        return f"{self._numer}/{abs(self._demon)}"
 
     @property
     def numer(self):
-        return self.numer_
+        return self._numer
 
     @property
     def demon(self):
-        return self.demon_
+        return self._demon
