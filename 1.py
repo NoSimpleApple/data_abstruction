@@ -6,16 +6,7 @@ class Ratio(object):
 
     def __init__(self, numer, demon):
 
-        def find_approx_num(numer_, demon_):
-            n = max(numer_, demon_)
-            m = min(numer_, demon_)
-
-            while n == m:
-                n = max(n, m)
-                a = n - m
-                m = min(n, m, a)
-
-            return m
+        find_approx_num = self._find_approx_num
 
         if isinstance(numer | demon, int):
             self._numer_proto = numer
@@ -30,12 +21,29 @@ class Ratio(object):
         self.numer_ = self._numer_proto / self._approx
         self.demon_ = self._demon_proto / self._approx
 
+    @staticmethod
+    def _find_approx_num(x, y):
+        n = max(x, y)
+        m = min(x, y)
+
+        while n == m:
+            n = max(n, m)
+            a = n - m
+            m = min(n, m, a)
+
+        return m
+
     @classmethod
     def construct_radio(cls):
         return cls.__new__(cls)
 
     def __add__(self, other):
-        pass
+        outcome = other.construct_radio()
+        outcome.__init__(self.numer_ + self.demon_,
+                         self.numer_ * self.demon_
+                         )
+
+        return outcome.__str__()
 
     def __sub__(self, other):
         pass
@@ -53,7 +61,7 @@ class Ratio(object):
         pass
 
     def __str__(self):
-        return f"{self.numer_}/{self.demon_}"
+        return f"{self.numer_}/{abs(self.demon_)}"
 
     @property
     def numer(self):
