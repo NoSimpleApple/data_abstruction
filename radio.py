@@ -80,6 +80,3 @@ class Ratio(object):
     def demon(self):
         return self._demon
 
-
-ra = Ratio(1, 3)
-print(ra + ra)
