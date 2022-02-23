@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # 占位高阶过程
 _sm_proc = lambda obj: obj
 
@@ -11,18 +13,22 @@ class Ratio(object):
         if isinstance(numer | demon, int):
             self._numer_proto = numer
             self._demon_proto = demon
+
             self._approx = find_approx_num(self._numer_proto,
                                            self._numer_proto
                                            )
+            # debug #
+            self._approx = 1
+            #########
 
         else:
             raise SyntaxError("numer and demon must be type of int")
 
-        self._numer = self._numer_proto / self._approx
-        self._demon = self._demon_proto / self._approx
+        self._numer = self._numer_proto // self._approx
+        self._demon = self._demon_proto // self._approx
 
     @staticmethod
-    def _find_approx_num(x, y):
+    def _find_approx_num(x: int, y: int):
         n = max(x, y)
         m = min(x, y)
 
@@ -39,8 +45,8 @@ class Ratio(object):
 
     def __add__(self, other):
         outcome = other.construct_radio()
-        outcome.__init__(self._numer + self._demon,
-                         self._numer * self._demon
+        outcome.__init__(self.numer * other.demon + self.demon * other.numer,
+                         self.demon * other.demon
                          )
 
         return outcome.__str__()
@@ -64,7 +70,7 @@ class Ratio(object):
         ))
 
     def __str__(self):
-        return f"{self._numer}/{abs(self._demon)}"
+        return f"{self.numer}/{abs(self.demon)}"
 
     @property
     def numer(self):
@@ -73,3 +79,7 @@ class Ratio(object):
     @property
     def demon(self):
         return self._demon
+
+
+ra = Ratio(1, 3)
+print(ra + ra)
