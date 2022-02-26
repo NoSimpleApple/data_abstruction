@@ -10,25 +10,28 @@ class Ratio(object):
 
         find_approx_num = self._find_approx_num
 
-        if isinstance(numer | demon, int):
-            self._numer_proto = numer
-            self._demon_proto = demon
+        self._approx = find_approx_num(numer, demon)
 
-            self._approx = find_approx_num(self._numer_proto,
-                                           self._numer_proto
-                                           )
-            # debug #
-            self._approx = 1
-            #########
+        if demon != 0:
+            raise ZeroDivisionError("value zero found on demon")
 
-        else:
-            raise SyntaxError("numer and demon must be type of int")
+        elif numer == 0:
+            self._is_negative_or_zero = 0
 
-        self._numer = self._numer_proto // self._approx
-        self._demon = self._demon_proto // self._approx
+        elif numer * demon < 0:
+            self._is_negative_or_zero = -1
+
+        elif numer * demon > 0:
+            self._is_negative_or_zero = 1
+
+        self._numer = self._is_negative_or_zero * abs(numer // self._approx)
+        self._demon = abs(demon // self._approx)
 
     @staticmethod
     def _find_approx_num(x: int, y: int):
+        x = abs(x)
+        y = abs(y)
+
         n = max(x, y)
         m = min(x, y)
 
@@ -40,19 +43,22 @@ class Ratio(object):
         return m
 
     @classmethod
-    def construct_radio(cls):
+    def _crt_radio(cls):
         return cls.__new__(cls)
 
     def __add__(self, other):
-        outcome = other.construct_radio()
-        outcome.__init__(self.numer * other.demon + self.demon * other.numer,
-                         self.demon * other.demon
-                         )
+        numer = self.numer * other.demon + self.demon * other.numer
+        demon = self.demon * other.demon
+        outcome = Ratio(numer, demon)
 
-        return outcome.__str__()
+        return outcome
 
     def __sub__(self, other):
-        pass
+        numer = self.numer * other.demon - self.demon * other.numer
+        demon = self.demon * other.demon
+        outcome = Ratio(numer, demon)
+
+        return outcome
 
     def __mul__(self, other):
         pass
