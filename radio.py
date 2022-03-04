@@ -12,7 +12,7 @@ class Ratio(object):
 
         self._approx = find_approx_num(numer, demon)
 
-        if demon != 0:
+        if demon == 0:
             raise ZeroDivisionError("value zero found on demon")
 
         elif numer == 0:
@@ -23,6 +23,10 @@ class Ratio(object):
 
         elif numer * demon > 0:
             self._is_negative_or_zero = 1
+
+        # debug
+        self._approx = 1
+        #
 
         self._numer = self._is_negative_or_zero * abs(numer // self._approx)
         self._demon = abs(demon // self._approx)
@@ -61,13 +65,26 @@ class Ratio(object):
         return outcome
 
     def __mul__(self, other):
-        pass
+        numer = self.numer * other.numer
+        demon = self.demon * other.demon
+        outcome = Ratio(numer, demon)
+
+        return outcome
 
     def __divmod__(self, other):
         pass
 
-    def __cmp__(self, other):
-        pass
+    def __lt__(self, other):
+        return self.numer * other.demon > other.numer * self.demon
+
+    def __le__(self, other):
+        return not self.__gt__(other)
+
+    def __gt__(self, other):
+        return self.numer * other.demon < other.numer * self.demon
+
+    def __ge__(self, other):
+        return not self.__lt__(other)
 
     def __eq__(self, other):
         return all((
@@ -85,4 +102,3 @@ class Ratio(object):
     @property
     def demon(self):
         return self._demon
-
