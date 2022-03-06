@@ -4,33 +4,34 @@
 _sm_proc = lambda obj: obj
 
 
-class Ratio(object):
+class Fraction(object):
 
-    def __init__(self, numer, demon):
+    def __init__(self, numer, denom):
 
-        find_approx_num = self._find_approx_num
-
-        self._approx = find_approx_num(numer, demon)
-
-        if demon == 0:
+        if denom == 0:
             raise ZeroDivisionError("value zero found on demon")
 
         elif numer == 0:
             self._is_negative_or_zero = 0
 
-        elif numer * demon < 0:
+        elif numer * denom < 0:
             self._is_negative_or_zero = -1
 
-        elif numer * demon > 0:
+        elif numer * denom > 0:
             self._is_negative_or_zero = 1
 
+        find_approx_num = self._find_approx_num
+        self._approx = find_approx_num(numer, denom)
+
         self._numer = self._is_negative_or_zero * abs(numer // self._approx)
-        self._demon = abs(demon // self._approx)
+        self._demon = abs(denom // self._approx)
 
     @staticmethod
     def _find_approx_num(x: int, y: int):
-        x = abs(x)
-        y = abs(y)
+        if not x * y:
+            return 1
+
+        x, y = abs(x), abs(y)
 
         while x != y:
             if x < y:
@@ -43,34 +44,34 @@ class Ratio(object):
         return cls.__new__(cls)
 
     def __add__(self, other):
-        numer = self.numer * other.demon + self.demon * other.numer
-        demon = self.demon * other.demon
-        outcome = Ratio(numer, demon)
+        numer = self.numer * other.denom + self.denom * other.numer
+        demon = self.denom * other.denom
+        outcome = Fraction(numer, demon)
 
         return outcome
 
     def __sub__(self, other):
-        numer = self.numer * other.demon - self.demon * other.numer
-        demon = self.demon * other.demon
-        outcome = Ratio(numer, demon)
+        numer = self.numer * other.denom - self.denom * other.numer
+        demon = self.denom * other.denom
+        outcome = Fraction(numer, demon)
 
         return outcome
 
     def __mul__(self, other):
         numer = self.numer * other.numer
-        demon = self.demon * other.demon
-        outcome = Ratio(numer, demon)
+        demon = self.denom * other.denom
+        outcome = Fraction(numer, demon)
 
         return outcome
 
     def __lt__(self, other):
-        return self.numer * other.demon > other.numer * self.demon
+        return self.numer * other.denom > other.numer * self.denom
 
     def __le__(self, other):
         return not self.__gt__(other)
 
     def __gt__(self, other):
-        return self.numer * other.demon < other.numer * self.demon
+        return self.numer * other.denom < other.numer * self.denom
 
     def __ge__(self, other):
         return not self.__lt__(other)
@@ -78,16 +79,21 @@ class Ratio(object):
     def __eq__(self, other):
         return all((
             self.numer == other.numer,
-            self.demon == other.demon
+            self.denom == other.denom
         ))
 
     def __str__(self):
-        return f"{self.numer}/{abs(self.demon)}"
+        return f'{self.numer}/{abs(self.denom)}'
+
+    def __repr__(self):
+        return f'{self.__class__} ' \
+               f'(sign={self._is_negative_or_zero}, approximate={self._approx}) ' \
+               f'src: {self._numer}/{self._demon} '
 
     @property
     def numer(self):
         return self._numer
 
     @property
-    def demon(self):
+    def denom(self):
         return self._demon
