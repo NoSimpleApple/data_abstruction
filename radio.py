@@ -24,10 +24,6 @@ class Ratio(object):
         elif numer * demon > 0:
             self._is_negative_or_zero = 1
 
-        # debug
-        self._approx = 1
-        #
-
         self._numer = self._is_negative_or_zero * abs(numer // self._approx)
         self._demon = abs(demon // self._approx)
 
@@ -36,15 +32,11 @@ class Ratio(object):
         x = abs(x)
         y = abs(y)
 
-        n = max(x, y)
-        m = min(x, y)
-
-        while n == m:
-            n = max(n, m)
-            a = n - m
-            m = min(n, m, a)
-
-        return m
+        while x != y:
+            if x < y:
+                x, y = y, x
+            x = x - y
+        return x
 
     @classmethod
     def _crt_radio(cls):
@@ -70,9 +62,6 @@ class Ratio(object):
         outcome = Ratio(numer, demon)
 
         return outcome
-
-    def __divmod__(self, other):
-        pass
 
     def __lt__(self, other):
         return self.numer * other.demon > other.numer * self.demon
